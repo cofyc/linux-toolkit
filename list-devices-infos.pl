@@ -8,7 +8,8 @@ my $scsidevices=`lsscsi | awk '{print \$NF}' | grep -P 'sd[a-z]\$'`;
 sub print_dev;
 sub print_dev {
     my $dev = shift;
-    my $output = `blkid -p -s TYPE -s PTTYPE -o export $dev`;
+    my $partition = shift;
+    my $output = `blkid -p -s TYPE -s PTTYPE -o export $partition`;
     my $fstype = "";
     my $pttype = "";
     for (split(/\n/, $output)) {
@@ -20,25 +21,27 @@ sub print_dev {
         }
     }
     if ($pttype ne "") {
-        $output = `partx --show --noheadings $dev`;
+        $output = `partx --show --noheadings $partition`;
         for (split(/\n/, $output)) {
             my @seps = split ' ', $_;
-            print_dev($dev . $seps[0]);
+            print_dev($dev, $dev . $seps[0]);
         }
-    } else { 
-	$output = `findmnt --noheadings $dev`;
+    } elsif ($fstype ne "") { 
+	$output = `findmnt --noheadings $partition`;
         if ($output ne "") {
             for (split(/\n/, $output)) {
                 my @seps = split /\s+/, $_;
-                print "$dev\t$seps[0]\t$seps[1]\t$seps[2]\t$seps[3]\n";
+                print "$dev\t$partition\t$fstype\t$seps[0]\t$seps[1]\t$seps[2]\t$seps[3]\n";
             }
         } else {
-            print "$dev\n";
+            print "$dev\t$partition\t$fstype\n";
         }
+    } else {
+        print "error: $dev/$partition does not have parition or filesysem\n"
     }
 }
 
-print "DEVICE\tPARTITION\tARGET\tSOURCE\tFSTYPE\tOPTIONS\n";
+print "DEVICE\tPARTITION\tFSTYPE\tTARGET\tSOURCE\tFSTYPE\tOPTIONS\n";
 for my $dev (split(/\n/, $scsidevices)) {
-    print_dev $dev;
+    print_dev($dev, $dev);
 }
