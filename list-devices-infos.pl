@@ -26,6 +26,7 @@ sub print_dev {
             print_dev($dev . $seps[0]);
         }
     } else { 
+	$output = `findmnt --noheadings $dev`;
         if ($output ne "") {
             for (split(/\n/, $output)) {
                 my @seps = split /\s+/, $_;
