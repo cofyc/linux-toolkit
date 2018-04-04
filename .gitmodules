@@ -1,0 +1,3 @@
+[submodule "sh-grains"]
+	path = sh-grains
+	url = https://github.com/cofyc/sh-grains.git
