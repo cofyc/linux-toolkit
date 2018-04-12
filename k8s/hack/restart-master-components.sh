@@ -10,9 +10,8 @@ source $ROOT/hack/lib.sh
 INVENTORY=output/all.ini
 $ROOT/hack/gen-ansible-inventory.sh > $INVENTORY
 
-for h in $hosts; do
-    ansible -i $INVENTORY $h -a "kill $(ps -C kube-apiserver -opid --no-headers)"
-    ansible -i $INVENTORY $h -a "kill $(ps -C kube-controller-manager -opid --no-headers)"
-    ansible -i $INVENTORY $h -a "kill $(ps -C kube-scheduler -opid --no-headers)"
-    kubectl -n kube-system get pods -l tier=control-plane
+for h in $@; do
+    ansible -i $INVENTORY $h -a 'bash -c "kill $(ps -C kube-apiserver -opid --no-headers)"'
+    ansible -i $INVENTORY $h -a 'bash -c "kill $(ps -C kube-controller-manager -opid --no-headers)"'
+    ansible -i $INVENTORY $h -a 'bash -c "kill $(ps -C kube-scheduler -opid --no-headers)"'
 done
