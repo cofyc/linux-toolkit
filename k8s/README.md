@@ -26,3 +26,9 @@ SERVER=https://...
 ```
 ./hack/restart-master-components.sh
 ```
+
+check:
+
+```
+kubectl -n kube-system get pods -l tier=control-plane -o wide
+```
