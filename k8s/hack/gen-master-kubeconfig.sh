@@ -36,6 +36,12 @@ CN=system:kube-scheduler
 hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
 hack::genkubeconfig "$SERVER" "$CN"
 
+# apiserver-kubelet-client
+O=system:masters
+CN=kube-apiserver-kubelet-client
+hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
+hack::genkubeconfig "$SERVER" "$CN"
+
 # front-proxy-client
 O=
 CN=front-proxy-client
