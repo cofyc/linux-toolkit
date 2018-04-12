@@ -14,6 +14,6 @@ shift
 O=system:nodes
 for node in $@; do
     CN=system:node:$node
-	hack::gencert $O $CN
-    hack::genkubeconfig $SERVER $CN
+	hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
+    hack::genkubeconfig "$SERVER" "$CN"
 done

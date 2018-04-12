@@ -8,6 +8,10 @@ source $ROOT/hack/logging.sh
 CFSSL_BIN=$ROOT/output/bin/cfssl
 CFSSLJSON_BIN=$ROOT/output/bin/cfssljson
 CFSSLCERTINFO_BIN=$ROOT/output/cfssl-certinfo
+DEFAULT_APISERVER_CA_CRT=/etc/kubernetes/pki/ca.crt
+DEFAULT_APISERVER_CA_KEY=/etc/kubernetes/pki/ca.key
+DEFAULT_APISERVER_FRONT_PROXY_CA_CRT=/etc/kubernetes/pki/front-proxy-ca.crt
+DEFAULT_APISERVER_FRONT_PROXY_CA_KEY=/etc/kubernetes/pki/front-proxy-ca.key
 
 function hack::get_cfssl_bins() {
     local VERSION=R1.2
@@ -19,8 +23,10 @@ function hack::get_cfssl_bins() {
 }
 
 function hack::gencert() {
-    local O=$1
-    local CN=$2
+    local ca_crt=$1
+    local ca_key=$2
+    local CN=$3
+    local O=$4
 
     local csrjson=$ROOT/output/${CN}.json
 
@@ -33,16 +39,24 @@ cat <<EOF > ${csrjson}
         "size": 2048
     },
     "names": [
+EOF
+
+if [ -n "$O" ]; then
+    cat <<EOF >> ${csrjson}
         {
             "O": "${O}"
         }
+EOF
+fi
+
+cat <<EOF >> ${csrjson}
     ]
 }
 EOF
 
     cd $ROOT/output
     $CFSSL_BIN gencert \
-        -ca /etc/kubernetes/pki/ca.crt -ca-key /etc/kubernetes/pki/ca.key \
+        -ca ${ca_crt} -ca-key ${ca_key} \
         -config $ROOT/hack/client-config.json \
         ${csrjson} | $CFSSLJSON_BIN -bare $CN
     mv "$CN-key.pem" $CN.key

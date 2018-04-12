@@ -8,9 +8,7 @@ ROOT=$(unset CDPATH && cd $(dirname "${BASH_SOURCE[0]}")/.. && pwd)
 cd $ROOT
 source $ROOT/hack/lib.sh
 
-O=system:masters
-CN=kubernetes-admin
-SERVER=$1
+CN=$1
+O=$2
 
-hack::gencert $O $CN
-hack::genkubeconfig $SERVER $CN
+hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
