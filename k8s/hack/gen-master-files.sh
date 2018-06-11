@@ -18,32 +18,30 @@ if [ -z "$SERVER" ]; then
     exit 1
 fi
 
-# admin
+# admin.conf
 O=system:masters
 CN=kubernetes-admin
 hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
 hack::genkubeconfig "$SERVER" "$CN"
 
-# controller-manager
+# controller-manager.conf
 O=
 CN=system:kube-controller-manager
 hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
 hack::genkubeconfig "$SERVER" "$CN"
 
-# scheduler
+# scheduler.conf
 O=
 CN=system:kube-scheduler
 hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
 hack::genkubeconfig "$SERVER" "$CN"
 
-# apiserver-kubelet-client
+# apiserver-kubelet-client.crt/key
 O=system:masters
 CN=kube-apiserver-kubelet-client
 hack::gencert $DEFAULT_APISERVER_CA_CRT $DEFAULT_APISERVER_CA_KEY "$CN" "$O"
-hack::genkubeconfig "$SERVER" "$CN"
 
-# front-proxy-client
+# front-proxy-client.crt/key
 O=
 CN=front-proxy-client
 hack::gencert $DEFAULT_APISERVER_FRONT_PROXY_CA_CRT $DEFAULT_APISERVER_FRONT_PROXY_CA_KEY "$CN" "$O"
-hack::genkubeconfig "$SERVER" "$CN"

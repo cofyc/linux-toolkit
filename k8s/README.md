@@ -12,7 +12,7 @@ SERVER=https://...
 
 ```
 SERVER=https://...
-./hack/gen-master-kubeconfig.sh $SERVER
+./hack/gen-master-files.sh $SERVER
 ```
 
 ## Copy master files to other master
