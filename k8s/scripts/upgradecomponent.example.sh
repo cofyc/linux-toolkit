@@ -5,13 +5,14 @@ set -o nounset
 set -o pipefail
 
 IMAGE=
+COMPONENT=kube-scheduler
 
 docker pull "$IMAGE"
 
-cp /etc/kubernetes/manifests/kube-scheduler.yaml /tmp/kube-scheduler.yaml
+cp /etc/kubernetes/manifests/${COMPONENT}.yaml /tmp/${COMPONENT}.yaml
 
-sed -i "s#image: .*#image: ${IMAGE}#g" /tmp/kube-scheduler.yaml
+sed -i "s#image: .*#image: ${IMAGE}#g" /tmp/${COMPONENT}.yaml
 
-diff -u /etc/kubernetes/manifests/kube-scheduler.yaml /tmp/kube-scheduler.yaml
+diff -u /etc/kubernetes/manifests/${COMPONENT}.yaml /tmp/${COMPONENT}.yaml || true
 
-cp /tmp/kube-scheduler.yaml /etc/kubernetes/manifests/kube-scheduler.yaml
+cp /tmp/${COMPONENT}.yaml /etc/kubernetes/manifests/${COMPONENT}.yaml
