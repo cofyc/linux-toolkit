@@ -31,6 +31,7 @@ shift $((OPTIND-1))
 
 hostpattern=$1
 script=$ROOT/$2
+shift 2
 
 if [ ! -e "$script" ]; then
     echo "error: $script not found"
@@ -43,4 +44,4 @@ $ROOT/hack/gen-ansible-inventory.sh > $INVENTORY
 src=$script
 dst=/tmp/ansbile.script.$$
 ansible -f 5 -i $INVENTORY $hostpattern -m copy -a "src=$src dest=$dst"
-ansible -f 1 -i $INVENTORY $hostpattern -m shell -a "bash $dst"
+ansible -f 1 -i $INVENTORY $hostpattern -m shell -a "bash $dst $@"
