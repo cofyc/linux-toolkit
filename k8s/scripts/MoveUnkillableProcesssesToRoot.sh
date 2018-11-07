@@ -6,7 +6,7 @@
 # This script is used to move unkillable processes to root cgroup.
 #
 
-pids=$(cat /sys/fs/cgroup/systemd/system.slice/kubelet.service/tasks | xargs -n 1 -Itaskid bash -c "echo -n taskid '   '; awk -F: '/^State:/ {print $2}' /proc/taskid/status" | grep 'State: D (disk sleep)' | awk '{ print $1 }')
+pids=$(cat /sys/fs/cgroup/systemd/system.slice/kubelet.service/tasks | xargs -n 1 -Itaskid bash -c "echo -n taskid '   '; awk -F: '/^State:/ {print $2}' /proc/taskid/status" | grep -P 'D\s+\(disk sleep\)' | awk '{ print $1 }')
 
 function movetoroot() {
     local pid=$1
@@ -21,6 +21,6 @@ if [[ "$pids" == "" ]]; then
 else
     for pid in $pids; do
         echo "$pid in kubelet.service is unkillable"
-#        movetoroot $pid
+        movetoroot $pid
     done
 fi
